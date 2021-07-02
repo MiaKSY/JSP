@@ -14,7 +14,9 @@ public class EmpDAO {
 	// 본인 IP 주소 확인하는 법 : CMD -> ipconfig
 	
 	String driverName = "oracle.jdbc.driver.OracleDriver";
-	String url ="jdbc:oracle:thin:@192.168.0.141:1521:xe";
+// 	String url ="jdbc:oracle:thin:@192.168.0.141:1521:xe"; // 학원
+// 	String url ="jdbc:oracle:thin:@192.168.55.150:1521:xe"; // 집
+	String url ="jdbc:oracle:thin:@localhost:1521:xe";
 	String user ="HR";
 	String pass ="1234";
 	
@@ -29,6 +31,7 @@ public class EmpDAO {
 		// 예외처리방법 
 		// 1) 내가 직접 잡음 : try-catch 
 		// 2) 예외 그냥 던짐 : throws Exception 추가
+		System.out.println("생성자 한번");
 	}
 	
 	
@@ -92,9 +95,13 @@ public class EmpDAO {
 		
 
 		while(rs.next()) {
-			// rs.next()인 이유는? 첫줄은 컬럼이름이기 때문이다. 컬럼이름 빼고, 데이터만 가져오려고 rs.next()라고 했다.
+			// rs.next()인 이유는? 첫줄은 컬럼이름이기 때문이다. 
+			// 컬럼이름 빼고, 데이터만 가져오려고 rs.next()라고 했다.
+			// 하나하나 내려가면서, next() 다음줄에 데이터가 있으면 true
+			// 계속 내려가다가 다음줄에 데이터가 없으면 false
 			// 가져온 SQL 데이터를 한 행 가져와서 넣어줄 변수 vo 생성
 			EmpVO vo = new EmpVO();
+			// getInt("대문자") : 대문자로 쓴 이유는, SQL문은 대소문자를 가리지 않기 때문이다.
 			vo.setEno(rs.getInt("ENO"));
 			vo.setEname(rs.getString("ENAME"));
 			vo.setManager(rs.getInt("MANAGER"));
@@ -127,9 +134,7 @@ public class EmpDAO {
 	
 	
 	
-	
-	
-	
+
 	//----------------------------------------------	
 	// insertEmp의 시작	
 	// 입력값으로 받은 데이터를 DB에 넣어주는 함수 insertEmp 생성
@@ -181,7 +186,9 @@ public class EmpDAO {
 	// DB에서 데이터를 가져오는 함수 viewEmpEmp 생성
 	
 	
-	public ArrayList<EmpVO> viewEmp(String eno) throws Exception {
+	public EmpVO viewEmp(String eno) throws Exception {
+		
+		// JDBC 절차 작성
 		
 		Connection con = null;
 		PreparedStatement ps = null;
@@ -194,24 +201,31 @@ public class EmpDAO {
 		// 3. sql문장 만들기
 		String sql = "SELECT * FROM employee WHERE eno=?";
 		// 물음표?를 쓰는 이유는?
-		// GET 방식으로 WHERE 절에 들어가는 값을 받을 것이기 때문이다!
+		// 입력값을 추후에 받을 것이기 때문이다!
+		// 물음표는 반드시 SET 해주어야한다!!!
+		
 		
 		// 4. 전송객체 얻어오기
 		ps = con.prepareStatement(sql);
 
 		// 이 부분이 또 중요!!!
+		// 위에 SQL문에 물음표?가 들어가면, 반드시 여기에서 set을 해주어야 합니다.
+		
 		ps.setInt(1, Integer.parseInt(eno));
+		// 왜 0이 아니라 1부터 시작해요?
+		// 프로그램 언어가 아닌 것은 1부터 시작합니다.
+		// 대표적으로: 데이터베이스, CSS 가 그렇습니다.
 		
 		
-		
-		// 5. 전송 (executeQuery() / executeUpdate() )
+		// 5. 전송 
+		// 리턴값이 다르기 때문에 다른 함수를 쓴다.
+		// int executeQuery() / ResultSet executeUpdate() 
 		// select 쿼리문의 ResultSet을 변수rs에 저장
 		ResultSet rs = ps.executeQuery();
+
+		EmpVO vo = new EmpVO();
 		
-		ArrayList<EmpVO> list = new ArrayList<EmpVO>();
-		
-		while(rs.next()) {
-			EmpVO vo = new EmpVO();
+		if( rs.next() ) {
 			vo.setEno(rs.getInt("ENO"));
 			vo.setEname(rs.getString("ENAME"));
 			vo.setJob(rs.getString("JOB"));
@@ -220,9 +234,8 @@ public class EmpDAO {
 			vo.setSalary(rs.getInt("SALARY"));
 			vo.setCommission(rs.getInt("COMMISSION"));
 			vo.setDno(rs.getInt("DNO"));
-			list.add(vo);
 		}
-		return list;
+		return vo;
 		
 		} finally {
 				
@@ -236,4 +249,150 @@ public class EmpDAO {
 	//----------------------------------------------	
 	
 	
+//	//----------------------------------------------	
+//	// 효원님이 푸신 정성님 숙제의 시작	
+//	
+//   public ArrayList<EmpVO> viewEmpMa (String manager) throws Exception{
+//         Connection con = null;
+//         PreparedStatement ps = null;
+//         
+//         try {
+//            //2.연결객체 가져오기
+//            con = DriverManager.getConnection(url, user,pass);
+//            //3.sql문장 작성
+//             String sql = "SELECT * FROM employee WHERE manager=?";   
+//            //4.sql문장을 전송객체 얻어오기
+//            ps = con.prepareStatement(sql);
+//            ps.setInt(1, Integer.parseInt(manager));
+//            // index 자릿수
+//            
+//            //5.전송
+//            //준비된 상태의 실행할 쿼리문장을 결과값인 resultset인 rs에 저장해라
+//            ResultSet rs = ps.executeQuery();
+//            
+//            ArrayList<EmpVO> list = new ArrayList<EmpVO>();
+//            
+//            while(rs.next()) {
+//               EmpVO vo = new EmpVO();
+//               vo.setEno(rs.getInt("ENO"));
+//               vo.setJob(rs.getString("JOB"));
+//               vo.setEname(rs.getString("ENAME"));
+//               vo.setManager(rs.getInt("MANAGER"));
+//               vo.setHiredate(rs.getString("HIREDATE"));
+//               vo.setSalary(rs.getInt("SALARY"));
+//               vo.setCommission(rs.getInt("COMMISSION"));
+//               vo.setDno(rs.getInt("DNO"));
+//               list.add(vo);
+//               
+//            }
+//            
+//             return list;
+//             
+//         }finally {
+//            //6.연결객체 닫기
+//            ps.close();
+//            con.close();
+//         
+//         }
+//	      
+//	   
+//	   }
+//	// 효원님이 푸신 정성님 숙제의 종료
+//	//----------------------------------------------
+	
+	
+	
+	//----------------------------------------------	
+	// deleteEmp의 시작
+	
+	public int deleteEmp(String eno) throws Exception{
+		
+		// JDBC 절차 작성
+		
+		Connection con = null;
+		PreparedStatement ps = null;
+		
+		try {
+		
+		// 2. 연결객체 얻어오기
+		con = DriverManager.getConnection(url, user, pass);
+		
+		// 3. sql문장 만들기
+		String sql = "DELETE * FROM employee WHERE eno=?";
+
+		// 4. 전송객체 얻어오기
+		ps = con.prepareStatement(sql);	
+		ps.setInt(1, Integer.parseInt(eno));
+
+		// 5. 전송 
+		int result = ps.executeUpdate();
+		return result;
+		
+		} finally {
+			
+		ps.close();
+		con.close();
+		}
+		
+	}
+	
+	// deleteEmp의 종료
+	//----------------------------------------------	
+		
+	
+	
+	//----------------------------------------------	
+	// modifyEmp의 시작
+	
+	public void modifyEmp(EmpVO vo) throws Exception{
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		try {
+			// 2. 연결객체 얻어오기
+			conn = DriverManager.getConnection(url, user, pass);
+			
+			//3. sql 문장 만들기
+			String sql = "UPDATE employee SET "
+					+ " eno=?, "
+					+ " ename=?, "
+					+ " job=?, "
+					+ " manager=?, "
+					+ " salary=?, "
+					+ " commission=?, "
+					+ " dno=?, "
+					+ " WHERE eno=? ";
+			
+			// UPDATE employee SET ename='홍길순, job='개발자,
+			// salary=5000 WHERE eno=7799;
+
+			
+			// 4. 전송객체얻어오기
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, vo.getEno());
+			pstmt.setString(2, vo.getEname());
+			pstmt.setString(3, vo.getJob());
+			pstmt.setInt(4, vo.getManager());
+			pstmt.setString(5, vo.getHiredate());
+			pstmt.setInt(6, vo.getSalary());
+			pstmt.setInt(7, vo.getCommission());
+			pstmt.setInt(8, vo.getDno());
+			pstmt.setInt(9, vo.getEno());
+
+			// 5. 전송 ()
+			pstmt.executeUpdate();
+			
+		} finally {
+			
+			//6. 닫기 : 가장 작은 아이부터 close해야한다.
+			pstmt.close();
+			conn.close();
+		}
+	}
+	
+	// modifyEmp의 종료
+	//----------------------------------------------
+	
+	
+	
+
 }

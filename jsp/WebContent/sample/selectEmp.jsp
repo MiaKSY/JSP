@@ -58,7 +58,7 @@
 	<% for(EmpVO vo : list){ %>
 	<tr>
 		<td><%=vo.getEno()%></td>
-		<td><a href="viewEmp.jsp?eno=<%=vo.getEno()%>"><%=vo.getEname()%></a></td> 
+		<td><a href="viewEmp.jsp?eno=<%=vo.getManager()%>"><%=vo.getEname()%></a></td> 
 		<!-- 이름에 하이퍼링크를 하나 달았다. -->
 		<!-- 이름을 클릭했을때 viewEmp.jsp를 불러올거에요 -->
 		<!-- 그런데 나 자신에 대해서만 불러올거에여 -->
