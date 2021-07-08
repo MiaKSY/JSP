@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
+  <display-name>jsp</display-name>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+  </welcome-file-list>
+  
+  
+  	<servlet>
+  		<servlet-name>SimpleControl</servlet-name>
+  		<servlet-class>mvc.simple.SimpleControl</servlet-class>
+  	</servlet>
+  
+  	<servlet-mapping>
+  		<servlet-name>SimpleControl</servlet-name>
+  		<url-pattern>/sc</url-pattern>
+  		<url-pattern>*.ksy</url-pattern>
+  	</servlet-mapping>
+  
+  
+  	<servlet>
+  		<servlet-name>GuestControl</servlet-name>
+  		<servlet-class>mvc.guest.control.GuestControl</servlet-class>
+  	</servlet>
+  
+  	<servlet-mapping>
+  		<servlet-name>GuestControl</servlet-name>
+  		<url-pattern>/GuestControl</url-pattern>
+  		<url-pattern>*.gc</url-pattern>
+  	</servlet-mapping>
+  
+  
+  <!-- 서로 다른 서블릿일 때, 확장자 이름은 달라야 합니다! -->
+</web-app>
