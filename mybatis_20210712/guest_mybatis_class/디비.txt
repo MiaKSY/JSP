@@ -1,0 +1,16 @@
+테이블명 : comment_tab
+
+글번호 : comment_no		number			PK
+사용자명 : user_id		varchar2(30)
+내용 : comment_content	varchar2(500)
+날짜 : reg_Date			date
+
+
+
+CREATE TABLE comment_tab
+(
+comment_no		number			primary key,
+user_id		varchar2(30),
+comment_content	varchar2(500),
+reg_Date			date
+);

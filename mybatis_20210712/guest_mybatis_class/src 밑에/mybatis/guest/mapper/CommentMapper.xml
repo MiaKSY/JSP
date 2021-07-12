@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="CommentMapper">
+
+	<!-- 전체검색(방법1) -->
+
+<!-- 
+	<select id="selectComment"  resultType="comment">
+		SELECT 
+		
+		* 
+
+===============================================
+			comment_no commentNo, 
+			user_id userId,
+			comment_content commentContent,
+			reg_date regDates
+===============================================
+
+ 
+		 FROM comment_tab
+	</select>
+ -->
+
+
+
+	<!-- PK 검색(방법1) -->
+<!-- 	
+	<select id="selectCommentByPK" parameterType="long" resultType="comment">
+		SELECT
+		*
+		FROM comment_tab
+		WHERE comment_no=#{commentNo}
+	</select>
+-->
+
+
+
+	<!-- 방법2(전체검색 + PK검색) -->
+
+	<select id="selectComment" parameterType="hashmap" resultType="comment" >
+		SELECT 
+		* 
+		 FROM comment_tab
+		 <where>
+		 	<if test="commentNo != null">
+		 		comment_no=#{commentNo}
+		 	</if>
+		 	<if test="condition != null">
+		 		${condition} LIKE '%${keyword}%'
+		 		
+		 	</if>
+		 </where>
+	</select>
+
+
+<!-- 
+
+JDBC의 전송객체
+1. Statement
+	String sql = "SELECT * FROM emp WHERE eno=9"
+	▶String sql = "SELECT * FROM emp WHERE eno=" + sabun;
+	String sql = "SELECT * FROM emp WHERE ename='SCOTT'"
+	▶String sql = "SELECT * FROM emp WHERE ename='" + irum +"'";
+	
+	
+2. PreparedStatement
+	String sql = "SELECT * FROM emp WHERE eno=?"
+	PreparedSttement ps = con.prepareStatement(sql);
+	ps.setInt(1, sabun)
+
+	String sql = "SELECT * FROM emp WHERE irum=?"
+	PreparedSttement ps = con.prepareStatement(sql);
+	ps.setString(1, irum)
+
+Mybatis
+	#{} : PreparedStatement : 자동으로 스몰쿼테이션이 생긴다.
+	${} : Statement  		: 스몰쿼테이션이 생기지 않는다.
+
+ -->
+
+
+
+	<!-- 입력 - 오라클db -->
+	
+<!-- 
+	<insert id="insertComment" parameterType="comment" >
+		INSERT INTO
+		comment_tab(comment_no, user_id, comment_content, reg_date)
+		VALUES(#{commentNo},#{userId},#{commentContent},sysdate)
+	</insert>
+ -->	
+	
+	
+	<!-- 입력 - 마리아db -->
+	
+		<insert id ="insertComment" parameterType="mybatis.guest.model.Comment">
+	      INSERT INTO comment_tab(user_id,comment_content,reg_date) 
+	      VALUES(#{userId},#{commentContent},sysdate())
+		</insert>
+	
+	
+		<delete id="delectCommentByPK" parameterType="comment">
+			DELETE FROM comment_tab
+			WHERE comment_no=#{commentNo}
+		</delete>
+		
+		
+	<!-- 수정 - 마리아db -->		
+		<update id="modifyComment" parameterType="comment">
+			UPDATE comment_tab SET
+				user_id=#{userId},
+				comment_content=#{commentContent},
+				reg_date=sysdate()
+			WHERE comment_no=#{commentNo}
+		</update>
+	
+</mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <!-- 새로운 매퍼라면! con-fig에서 매퍼 등록을 꼭 해주어야 한다.! -->
+ <mapper namespace="EmployeeMapper">
+ 
+ 	<!-- *************************************** -->
+ 	<!-- 조인한 테이블 가져오기 -->
+ 	<!-- *************************************** -->
+ 	<!-- resultType=""에 무엇을 쓰면 좋을까요? -->
+ 	<!-- ***** hashmap ***** -->
+ 	<!-- 그리고, 연산을 하거나 조인을 했을 때 -->
+ 	<!-- ***** 컬럼명을 다시 지정해줘! ***** -->
+ 	<!-- *************************************** -->
+	<select id="empSelect" resultType="hashmap">
+		SELECT e.eno AS eno, e.ename AS ename, e.job AS job, d.dnme AS dname
+		FROM employee e INNER JOIN department d
+		ON e.dno = d.dno
+	</select>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ </mapper>
